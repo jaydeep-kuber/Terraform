@@ -1,0 +1,14 @@
+*.backup
+.terraform
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+crash.log
+*.tfvars
+*.tfvars.json
+*.tfplan
+*.tfplan.json
+*.tfignore
+*.tfstate.d
+# Local .terraform directory
+.terraform/
