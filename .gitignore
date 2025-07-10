@@ -12,3 +12,5 @@ crash.log
 *.tfstate.d
 # Local .terraform directory
 .terraform/
+
+*key*

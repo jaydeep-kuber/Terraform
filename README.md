@@ -97,3 +97,5 @@
 ```
 
 #### Interpolation
+
+- interpolation is way using you can inherit or extract property from terraform block.
