@@ -1,6 +1,6 @@
 # key pair 
 resource "aws_key_pair" "terra-key-ec2" {
-  key_name = "terra-key-ec2"
+  key_name = var.ec2_key_name
   public_key = file("terra-key-ec2.pub")
 }
 
@@ -22,7 +22,15 @@ resource "aws_security_group" "terra-sg" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow SSH, TF created"
-  }    
+  } 
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow HTTP, for nginx"
+  }  
   # outbound rules
   egress {
     from_port = 0
@@ -40,15 +48,15 @@ resource "aws_security_group" "terra-sg" {
 resource "aws_instance" "TF-ec" {
     key_name = aws_key_pair.terra-key-ec2.key_name
     security_groups = [aws_security_group.terra-sg.name]
-    instance_type = "t2.micro"
-    ami = "ami-0f918f7e67a3323f0" # Ubuntu 24.04 LTS in ap-south-1 region
-
+    instance_type = var.ec2_instance_type
+    ami = var.ec2_ami_id # Ubuntu 24.04 LTS in ap-south-1 region
+    user_data = file("install_nginx.sh") # Script to install nginx
     tags = {
         Name = "create-by-terra"
     }
 
     root_block_device {
-      volume_size = 8 # Size in GB
+      volume_size = var.ec2_root_volume_size # Size in GB
       volume_type = "gp2" # General Purpose SSD
     }
 }
