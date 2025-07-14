@@ -99,3 +99,53 @@
 #### Interpolation
 
 - interpolation is way using you can inherit or extract property from terraform block.
+
+#### meta arguments
+
+1.count: this meta arg use to create 'n' number of ec
+
+```python
+    resource "aws_instance" "TF-ec" {
+        count = 2 # create two EC.
+        key_name = aws_key_pair.terra-key-ec2.key_name
+        security_groups = [aws_security_group.terra-sg.name]
+        instance_type = var.ec2_instance_type
+        ami = var.ec2_ami_id # Ubuntu 24.04 LTS in ap-south-1 region
+        user_data = file("install_nginx.sh") # Script to install nginx
+        tags = {
+            Name = "create-by-terra"
+        }
+    }
+```
+
+- if you have created `output.tf` then for multiple EC output you need to change it as below mentioned
+
+```python
+    output "ec2_public_ip"{
+      value = aws_instance.TF-ec[*].public_ip
+    }
+```
+
+- [*] this notaion tells ip of multiple EC
+
+2.for_each: this is an other meta-arg key word.
+
+```python
+    
+        resource "aws_instance" "TF-ec" {
+        
+        for_each = tomap({
+            "Tf-ec-small" = "t2.small"
+        })
+
+        key_name = aws_key_pair.terra-key-ec2.key_name
+        security_groups = [aws_security_group.terra-sg.name]
+        instance_type = each.key
+        ami = var.ec2_ami_id # Ubuntu 24.04 LTS in ap-south-1 region
+        user_data = file("install_nginx.sh") # Script to install nginx
+        tags = {
+            Name = each.value
+        }
+    }
+
+```
