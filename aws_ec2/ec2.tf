@@ -46,6 +46,16 @@ resource "aws_security_group" "terra-sg" {
 
 # EC2 Instance
 resource "aws_instance" "TF-ec" {
+    # count = var.ec2_instance_count # Number of instances to create
+    
+    for_each = tomap({
+      Tf-ec-micro = "t2.micro"
+      Tf-ec-small = "t2.small"
+      Tf-ec-medium = "t2.medium"
+    }) # meata argument to create multiple instances with different types
+    
+    depends_on = [ aws_key_pair.terra-key-ec2, aws_security_group.terra-sg ]
+
     key_name = aws_key_pair.terra-key-ec2.key_name
     security_groups = [aws_security_group.terra-sg.name]
     instance_type = var.ec2_instance_type
@@ -56,7 +66,7 @@ resource "aws_instance" "TF-ec" {
     }
 
     root_block_device {
-      volume_size = var.ec2_root_volume_size # Size in GB
+      volume_size = var.ENV =="prod" ? var.ec2_root_volume_size : 8 # Size in GB
       volume_type = "gp2" # General Purpose SSD
     }
 }

@@ -136,6 +136,7 @@
         
         for_each = tomap({
             "Tf-ec-small" = "t2.small"
+            "Tf-ec-mid" = "t2.medium"
         })
 
         key_name = aws_key_pair.terra-key-ec2.key_name
@@ -149,3 +150,32 @@
     }
 
 ```
+
+- To make dependacy in terraform use one more meta arg,
+
+```python
+    depends_on = [aws_security_group.terra-sg]
+```
+
+- turnery in terraform like, if else
+
+```python
+    volume_size = var.ENV =="prod" ? var.ec2_root_volume_size : 8 # Size in GB
+```
+
+### Terraform state management with AWS
+
+- What is a state?
+- - a persistent record of the infrastructure managed by Terraform, acting as a map between the resources defined in configuration files and their real-world counterparts
+
+```python
+    # commands for terraform state.
+    terraform state list
+    terraform state show {res.ref_name}
+    terraform state rm {res.ref_name} # this command will remove state management now actual res. 
+    terraform import {res.ref_name} {id-from-aws} 
+```
+
+#### secure state management best practice
+
+- will do tomorrow
